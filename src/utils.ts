@@ -1,4 +1,4 @@
-import {PaperLatestVersion} from "./paper.d.ts";
+import { PaperLatestVersion } from "./paper.d.ts";
 
 const ENDPOINT = 'https://papermc.io/api/v1/paper';
 
@@ -18,15 +18,48 @@ export async function fetchLatestVersion(version: string) {
  */
 export async function downloadLatestVersion(version: string) {
     Deno.chdir("tmp")
-    const tmpFile = await Deno.makeTempFile({
+    const tmpFile = Deno.makeTempFileSync({
         dir: Deno.cwd(),
         prefix: 'paper_',
         suffix: '.jar'
     });
     const serverFile = await paperAPI(`/${version}/latest/download`);
     const body = new Uint8Array(await serverFile.arrayBuffer());
-    await Deno.writeFile(tmpFile, body)
+    Deno.writeFileSync(tmpFile, body)
     Deno.chdir("../");
     Deno.copyFileSync(tmpFile, "./server/server.jar")
-    await Deno.remove(tmpFile)
+    Deno.remove(tmpFile)
+    Deno.writeTextFileSync("./paper.json", JSON.stringify(
+        await fetchLatestVersion(version),
+    ));
+}
+
+
+export async function checkUpdate(version: string) {
+    try {
+        Deno.statSync('paper.json')
+    } catch(e) {
+        if (e instanceof Deno.errors.NotFound) {
+            console.error("Please make a setup before update.")
+            Deno.exit(1)
+        } else {
+            throw e;
+        }
+    }
+    const paper = Deno.readFileSync('paper.json')
+}
+
+export async function exists(filename: string): Promise<boolean> {
+    try {
+        Deno.stat(filename);
+        return true;
+    } catch (error) {
+        if (error instanceof Deno.errors.NotFound) {
+            // file or directory does not exist
+            return false;
+        } else {
+            // unexpected error, maybe permissions, pass it along
+            throw error;
+        }
+    }
 }

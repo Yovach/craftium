@@ -1,5 +1,5 @@
-import { PaperVersions } from "./src/paper.d.ts";
-import { downloadLatestVersion, paperAPI } from "./src/utils.ts";
+import { PaperVersions, PaperLatestVersion } from "./src/paper.d.ts";
+import { downloadLatestVersion, paperAPI, fetchLatestVersion, checkUpdate } from "./src/utils.ts";
 
 import { parse } from 'https://deno.land/std/flags/mod.ts';
 const parsedArgs = parse(Deno.args);
@@ -30,16 +30,37 @@ if (parsedArgs.setup) { // download and setup server files
 
     console.log(`Downloading paper.jar (${version})..`);
     try {
+        // we create "server" directory if not exists
         Deno.mkdirSync("./server/")
-    } catch(e) {
+    } catch (e) {
         console.error(e.message)
     }
-    const paperBuild = await downloadLatestVersion(version);
-    Deno.writeTextFileSync("./paper.json", JSON.stringify({
-        version,
-        paperBuild
-    }))
-    console.log(`Downloading complete !`)
+    await downloadLatestVersion(version);
+    console.log(`Downloading complete !`);
+} else if (parsedArgs.update) {
+    try {
+        Deno.statSync('paper.json');
+    } catch (e) {
+        if (e instanceof Deno.errors.NotFound) {
+            console.error("Please make a setup before update.");
+            Deno.exit(1);
+        } else {
+            throw e;
+        }
+    }
+
+    const decoder = new TextDecoder("utf-8");
+    const file = Deno.readFileSync('paper.json');
+    const { build: currentBuild, version } = <PaperLatestVersion>JSON.parse(decoder.decode(file));
+    const { build: latestBuild } = await fetchLatestVersion(version);
+    if ((+currentBuild) < (+latestBuild)) {
+        console.log('New update available, downloading..')
+        await downloadLatestVersion(version);
+        console.log('The new update has been downloaded.')
+    } else {
+        console.log('No update has been found !')
+    }
+    // checkUpdate();
 } else {
     console.error("An error occured, please specify a valid instruction.")
     Deno.exit(1)

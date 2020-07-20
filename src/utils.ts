@@ -35,18 +35,17 @@ export async function downloadLatestVersion(version: string) {
 }
 
 
-export async function checkUpdate(version: string) {
-    try {
-        Deno.statSync('paper.json')
-    } catch(e) {
-        if (e instanceof Deno.errors.NotFound) {
-            console.error("Please make a setup before update.")
-            Deno.exit(1)
-        } else {
-            throw e;
-        }
+export async function checkUpdate() {
+    const decoder = new TextDecoder("utf-8");
+    const file = Deno.readFileSync('paper.json');
+    const { build: currentBuild, version } = <PaperLatestVersion>JSON.parse(decoder.decode(file));
+    const { build: latestBuild } = await fetchLatestVersion(version);
+    if ((+currentBuild) < (+latestBuild)) {
+        console.log('New update available, downloading..')
+        await downloadLatestVersion(version);
+        return true;
     }
-    const paper = Deno.readFileSync('paper.json')
+    return false;
 }
 
 export async function exists(filename: string): Promise<boolean> {
@@ -62,4 +61,28 @@ export async function exists(filename: string): Promise<boolean> {
             throw error;
         }
     }
+}
+
+export function resetTmpDir() {
+    try {
+        Deno.mkdirSync("tmp")
+        console.log("Temp directory created!")
+    } catch (e) {
+        console.error(e.message)
+    }
+}
+
+/* Cleanup the tmp directory */
+export function cleanup() {
+    try {
+        Deno.removeSync("tmp", {
+            recursive: true
+        })
+        return true;
+    } catch (e) {
+        if (!(e instanceof Deno.errors.NotFound)) {
+            console.error(e.message)
+        }
+    }
+    return false;
 }

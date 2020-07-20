@@ -1,7 +1,7 @@
-import {PaperVersions} from "./src/paper.d.ts";
-import {downloadPaper, paperAPI} from "./src/utils.ts";
+import { PaperVersions } from "./src/paper.d.ts";
+import { downloadLatestVersion, paperAPI } from "./src/utils.ts";
 
-import {parse} from 'https://deno.land/std/flags/mod.ts';
+import { parse } from 'https://deno.land/std/flags/mod.ts';
 const parsedArgs = parse(Deno.args);
 
 if (parsedArgs.setup) { // download and setup server files
@@ -12,19 +12,30 @@ if (parsedArgs.setup) { // download and setup server files
         version = availableVersions[0]
         console.warn('Version not specified or invalid, last version (' + version + ') selected.')
     }
+
     try {
-        await Deno.remove("tmp", {
+        Deno.removeSync("tmp", {
             recursive: true
         })
-        await Deno.mkdir("tmp")
+    } catch (e) {
+        console.error(e.message)
+    }
+
+    try {
+        Deno.mkdirSync("tmp")
         console.log("Temp directory created!")
     } catch (e) {
         console.error(e.message)
     }
 
     console.log(`Downloading paper.jar (${version})..`);
-    const paperBuild = await downloadPaper(version);
-    Deno.writeTextFile("./server/paper.json", JSON.stringify({
+    try {
+        Deno.mkdirSync("./server/")
+    } catch(e) {
+        console.error(e.message)
+    }
+    const paperBuild = await downloadLatestVersion(version);
+    Deno.writeTextFileSync("./paper.json", JSON.stringify({
         version,
         paperBuild
     }))

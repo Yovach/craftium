@@ -5,6 +5,7 @@ import { parse } from 'https://deno.land/std/flags/mod.ts';
 const parsedArgs = parse(Deno.args);
 
 if (parsedArgs.setup) { // download and setup server files
+    
     const paper = <PaperVersions>await paperAPI('/').then((res) => res.json())
     let version = parsedArgs.setup;
     const availableVersions = paper.versions;

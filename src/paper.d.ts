@@ -12,3 +12,10 @@ export interface CraftiumData {
   version: string;
   last_update: number;
 }
+
+export interface CraftiumArgs {
+  setup?: string
+  cleanup?: any
+  launch?: any
+  update?: string
+}

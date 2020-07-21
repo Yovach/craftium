@@ -1,4 +1,4 @@
-# Craftium
+# Craftium (BETA)
 
 ## Introduction
 
@@ -18,6 +18,7 @@ To setup your server on the latest version of Minecraft, you must run this comma
 
 
 If you want to select your Minecraft version, please specify a version like this :
+
 ``deno run --allow-net --allow-write --allow-read https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --setup=1.15.2``
 
 ---
@@ -29,3 +30,7 @@ If you want to select your Minecraft version, please specify a version like this
 To update your server, you must run this command :
 
 ``deno run --allow-net --allow-write --allow-read https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --update``
+
+## Note
+
+Please take into account that this is not the final version of the project, there may be modifications on the commands or on the whole code.

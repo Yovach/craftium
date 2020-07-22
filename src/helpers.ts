@@ -1,8 +1,9 @@
 import { paperAPI, removeIfExists, downloadLatestVersion } from "./utils.ts";
 import { PaperVersions, CraftiumArgs } from "./paper.d.ts";
-const textEncoder = new TextEncoder();
+import Application from "./application.ts";
 
 export async function setupWorkplace(parsedArgs: CraftiumArgs) {
+  const application = Application.getInstance();
   const paper = <PaperVersions> await paperAPI("/").then((res) => res.json());
   let version = parsedArgs.setup ?? parsedArgs.update ?? parsedArgs.launch;
   if (typeof version === "undefined") {
@@ -26,7 +27,10 @@ export async function setupWorkplace(parsedArgs: CraftiumArgs) {
   Deno.mkdirSync("./tmp/");
   Deno.mkdirSync("./server/");
 
-  Deno.writeFileSync("./server/eula.txt", textEncoder.encode("eula=true"))
+  Deno.writeFileSync(
+    "./server/eula.txt",
+    application.getEncoder().encode("eula=true"),
+  );
   await downloadLatestVersion(version);
   console.log(`Downloading complete.`);
 }

@@ -10,16 +10,23 @@ This project uses the PaperMC API.
 
 ---
 
+## Why use Craftium ?
+
+The code is continually being developed, with options for future expansion.
+Today you can update the server and run it. This saves you some time when creating a server.
+
+---
+
 ## Setup your server
 
-To setup your server on the latest version of Minecraft, you must run this command :
+To launch your server on the latest version of Minecraft, you must run this command :
 
-``deno run --allow-net --allow-write --allow-read https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --setup``
+``deno run -A https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --launch``
 
 
 If you want to select your Minecraft version, please specify a version like this :
 
-``deno run --allow-net --allow-write --allow-read https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --setup=1.15.2``
+``deno run -A https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --launch=1.15.2``
 
 ---
 
@@ -29,7 +36,7 @@ If you want to select your Minecraft version, please specify a version like this
 
 To update your server, you must run this command :
 
-``deno run --allow-net --allow-write --allow-read https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --update``
+``deno run -A https://raw.githubusercontent.com/Yovach/craftium/master/mod.ts --update``
 
 ## Note
 

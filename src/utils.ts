@@ -1,4 +1,5 @@
 import { PaperLatestVersion } from "./paper.d.ts";
+import Application from "./application.ts";
 
 const ENDPOINT = "https://papermc.io/api/v1/paper";
 
@@ -38,10 +39,10 @@ export async function downloadLatestVersion(version: string) {
 }
 
 export async function checkUpdate() {
-  const decoder = new TextDecoder("utf-8");
+  const application = Application.getInstance();
   const file = Deno.readFileSync("paper.json");
   const { build: currentBuild, version } = <PaperLatestVersion> JSON.parse(
-    decoder.decode(file),
+    application.getDecoder().decode(file),
   );
   const { build: latestBuild } = await fetchLatestVersion(version);
   if ((+currentBuild) < (+latestBuild)) {

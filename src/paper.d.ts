@@ -14,8 +14,8 @@ export interface CraftiumData {
 }
 
 export interface CraftiumArgs {
-  setup?: string
-  cleanup?: any
-  launch?: any
-  update?: string
+  setup?: string;
+  cleanup?: boolean;
+  launch?: boolean;
+  update?: string;
 }
